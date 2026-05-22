@@ -1,0 +1,19 @@
+{
+  "rewrites": [
+    {
+      "comment": "Forward /r/:slug short-link redirects to the Express backend on Render.",
+      "source": "/r/:slug",
+      "destination": "https://your-backend.onrender.com/r/:slug"
+    },
+    {
+      "comment": "Forward all /api/* calls to the Express backend (avoids CORS preflight issues).",
+      "source": "/api/:path*",
+      "destination": "https://your-backend.onrender.com/api/:path*"
+    },
+    {
+      "comment": "Serve the React SPA for all other routes (dashboard, sign-in, home, etc.).",
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
+}
