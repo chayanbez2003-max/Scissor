@@ -28,13 +28,13 @@ app.use(helmet({
   contentSecurityPolicy: false, // Turn off CSP during development if needed
   crossOriginEmbedderPolicy: false,
 }));
-// Allowed origins — localhost for dev, Vercel deployment for production.
-// FRONTEND_URL env var should be set to your Vercel URL on Render's dashboard.
+// Allowed origins — always includes known prod URL + localhost for dev + env var as override.
 const allowedOrigins = [
   'http://localhost:5173',
-  'http://localhost:4173', // vite preview
-  process.env.FRONTEND_URL,
-].filter(Boolean); // remove undefined if FRONTEND_URL not set
+  'http://localhost:4173',           // vite preview
+  'https://newscissor.vercel.app',   // production frontend
+  process.env.FRONTEND_URL,          // override from Render env vars
+].filter(Boolean);
 
 const corsOptions = {
   origin: (origin, callback) => {
