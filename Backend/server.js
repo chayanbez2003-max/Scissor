@@ -28,8 +28,27 @@ app.use(helmet({
   contentSecurityPolicy: false, // Turn off CSP during development if needed
   crossOriginEmbedderPolicy: false,
 }));
+// Allowed origins — localhost for dev, Vercel deployment for production.
+// FRONTEND_URL env var should be set to your Vercel URL on Render's dashboard.
+const allowedOrigins = [
+  'http://localhost:5173',
+  'http://localhost:4173', // vite preview
+  process.env.FRONTEND_URL,
+].filter(Boolean); // remove undefined if FRONTEND_URL not set
+
 const corsOptions = {
-  origin: process.env.FRONTEND_URL || 'http://localhost:5173',
+  origin: (origin, callback) => {
+    // Allow requests with no origin (mobile apps, Postman, curl, server-to-server)
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+    // Also allow any *.vercel.app preview URL for your project
+    if (origin.endsWith('.vercel.app')) {
+      return callback(null, true);
+    }
+    callback(new Error(`CORS: origin '${origin}' not allowed`));
+  },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
